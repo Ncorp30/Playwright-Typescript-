@@ -1,0 +1,3 @@
+Sample document content for file upload testing.
+This is used to verify multiple file upload functionality.
+Document created for automation testing purposes.
