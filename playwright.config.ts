@@ -29,7 +29,7 @@ export default defineConfig({
     // Shared settings for all the projects below
     use: {
         // Base URL to use in actions like `await page.goto('/')`
-        baseURL: 'https://happy-beach-030e0a900.2.azurestaticapps.net',
+        baseURL: process.env.BASE_URL ?? 'https://happy-beach-030e0a900.2.azurestaticapps.net',
 
         // Collect trace when retrying the failed test
         trace: 'on-first-retry',

@@ -13,9 +13,10 @@ import * as path from 'path';
 
 // Test data file paths
 const TEST_DATA_DIR = path.join(process.cwd(), 'test-data');
-const SINGLE_FILE = path.join(TEST_DATA_DIR, 'sample-file.txt');
-const DOCUMENT_FILE = path.join(TEST_DATA_DIR, 'sample-document.txt');
-const UPLOAD_FILE = path.join(TEST_DATA_DIR, 'test-upload.txt');
+const getTestDataFile = (fileName: string): string => path.join(TEST_DATA_DIR, fileName);
+const SINGLE_FILE = getTestDataFile('sample-file.txt');
+const DOCUMENT_FILE = getTestDataFile('sample-document.txt');
+const UPLOAD_FILE = getTestDataFile('test-upload.txt');
 
 test.describe('File Upload Automation Challenge', () => {
     let fileUploadPage: FileUploadPage;

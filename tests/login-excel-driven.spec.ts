@@ -19,18 +19,38 @@ import * as path from 'path';
 // Path to Excel file
 const EXCEL_FILE_PATH = path.join(__dirname, '../test-data/loginTestData.xlsx');
 
-// Read test data from Excel file
-const validLoginData = readLoginTestData(EXCEL_FILE_PATH, 'ValidLogins');
-const validationErrorData = readLoginTestData(EXCEL_FILE_PATH, 'ValidationErrors');
-const specialCharacterData = readLoginTestData(EXCEL_FILE_PATH, 'SpecialCharacters');
-const boundaryTestData = readLoginTestData(EXCEL_FILE_PATH, 'BoundaryTests');
+let validLoginData: ReturnType<typeof readLoginTestData> = [];
+let validationErrorData: ReturnType<typeof readLoginTestData> = [];
+let specialCharacterData: ReturnType<typeof readLoginTestData> = [];
+let boundaryTestData: ReturnType<typeof readLoginTestData> = [];
 
-// Log loaded test data count
-console.log(`Loaded test data from Excel:`);
-console.log(`- ValidLogins: ${validLoginData.length} tests`);
-console.log(`- ValidationErrors: ${validationErrorData.length} tests`);
-console.log(`- SpecialCharacters: ${specialCharacterData.length} tests`);
-console.log(`- BoundaryTests: ${boundaryTestData.length} tests`);
+// Cache parsed test data per worker
+let testDataPromise: Promise<void> | undefined;
+async function loadTestData() {
+    if (!testDataPromise) {
+        testDataPromise = Promise.resolve().then(() => {
+            validLoginData = readLoginTestData(EXCEL_FILE_PATH, 'ValidLogins');
+            validationErrorData = readLoginTestData(EXCEL_FILE_PATH, 'ValidationErrors');
+            specialCharacterData = readLoginTestData(EXCEL_FILE_PATH, 'SpecialCharacters');
+            boundaryTestData = readLoginTestData(EXCEL_FILE_PATH, 'BoundaryTests');
+
+            console.log(`Loaded test data from Excel:`);
+            console.log(`- ValidLogins: ${validLoginData.length} tests`);
+            console.log(`- ValidationErrors: ${validationErrorData.length} tests`);
+            console.log(`- SpecialCharacters: ${specialCharacterData.length} tests`);
+            console.log(`- BoundaryTests: ${boundaryTestData.length} tests`);
+        }).catch((error) => {
+            throw new Error(`Failed to load Excel test data from "${EXCEL_FILE_PATH}": ${error instanceof Error ? error.message : String(error)}`);
+        });
+    }
+
+    return testDataPromise;
+}
+
+// Load test data from Excel file
+test.beforeAll(async () => {
+    await loadTestData();
+});
 
 test.describe('Excel Data-Driven Login Tests', () => {
     let loginPage: LoginPage;
